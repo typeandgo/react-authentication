@@ -21,12 +21,11 @@ export default class Header extends Component {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/register">Register</Link>
-                </li>            
+                </li>          
               </ul>
+
+              <UserPanel />
             </div>
-
-            <UserPanel />
-
           </nav>
       </div>
     )

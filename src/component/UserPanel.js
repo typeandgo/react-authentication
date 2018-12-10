@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -10,29 +10,39 @@ class UserPanel extends Component {
   render() {
 
     const { isAuth, user } = this.props;
-
-
-    console.log('user: ', Object.keys(user).length);
-    console.log('user: ', user);
-    console.log('isAuth: ', isAuth);
+    let template = (<Link className="nav-link" to="/login">Login</Link>);
 
     if (isAuth === AUTHENTICATED && Object.keys(user).length === 0) {
-      console.log('getUserInfo');
+      
       this.props.actionGetUser();
+
     } else if (isAuth === AUTHENTICATED && Object.keys(user).length > 0) {
 
-      return (
-        <ul class="nav navbar-nav navbar-right">
-          <li style={{ color: 'white', fontSize: '9px' }}>
-              {`${user.firstName} ${user.lastName}`} <br/>
-              {`Balance: ${user.balance}`} <br/>
-              <a href="#" style={{ color: 'white' }} onClick={this.props.actionLogout}>Çıkış Yap</a>
-            </li>
+      template = ( 
+        <Fragment>
+          <a href="#" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" style={{ fontSize: '12px' }} id="dropdownMenu2" aria-haspopup="true" aria-expanded="false">
+            {`${user.firstName} ${user.lastName}`}
+          </a>
+
+          <div style={{ fontSize: '9px' }}>{`Balance: ${user.balance} TL`}</div>       
+            
+          <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+            <Link className="dropdown-item" to="/account"><i class="fas fa-user"></i> Account</Link>
+            <Link className="dropdown-item" to="/settings"><i class="fas fa-cog"></i> Settings</Link>
+            <div className="dropdown-divider"></div>
+            <a className="dropdown-item" href="#" onClick={this.props.actionLogout}><i class="fas fa-power-off"></i> Logout</a>
           </ul>
+        </Fragment>
       )
     }
 
-    return (<Link className="nav-link" to="/login" style={{ cursor: 'pointer', color: 'white' }}>Login</Link>)
+    return (
+      <ul className="ml-auto navbar-nav">
+        <li className="nav-item dropdown user-panel">
+          { template }
+        </li>
+      </ul>
+    )
   }
 };
 
