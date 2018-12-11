@@ -23,39 +23,46 @@ app.use(session({
   resave: false
 }));
 
-app.get('/', (req, res) => {
-  if (req.session.page_views) {
-    req.session.page_views++;
-    res.send(`You visited this page ${req.session.page_views} times`);
-  } else {
-    req.session.page_views = 1;
-    res.send(`Welcome to this page for the first time`);
-  }
-});
+app.use(authCheck);
 
 app.get('/api/users/auth', (req, res) => {
   res.json({
-    isAuth: req.session.isAuth
+    isAuth: req.session.isAuth,
+    token: req.session.token
   });
 });
 
 app.post('/api/users/auth/login', (req, res) => {
   // BE API
 
+  const token = {
+    accessToken: 'ABC',
+    refreshToken: 'XYZ',
+    accessTokenExpireDate: '12345678',
+    refreshTokenExpireDate: '87654321'
+  };
+
   req.session.isAuth = 'AUTHENTICATED';
+  req.session.token = token;
 
   res.json({
-    isAuth: 'AUTHENTICATED'
+    isAuth: 'AUTHENTICATED',
+    token
   });
 });
 
 app.get('/api/users/auth/logout', (req, res) => {
   // BE API
 
+  const token = {};
+
   req.session.isAuth = 'UNAUTHENTICATED';
+  req.session.token = token;
+
 
   res.json({
-    isAuth: 'UNAUTHENTICATED'
+    isAuth: 'UNAUTHENTICATED',
+    token
   });
 });
 
@@ -63,7 +70,23 @@ app.get('/api/users/auth/refresh', (req, res) => {
   res.send('Refresh Token Service');
 });
 
-app.get('/api/users', authCheck, (req, res) => {
+app.get('/api/users', (req, res) => {
+  req.oAuthClient.request('http://localhost:3001/api/userProfile')
+    .then( result => {
+      return result.json();
+    })
+    .then( json => {
+      return res.json(json)
+    });
+});
+
+
+
+
+
+//--------------------------------------------
+// SIMULATED BE SERVICE
+app.get('/api/userProfile', (req, res) => {
   res.json({
     userId: '1234567890',
     firstName: 'Engin',

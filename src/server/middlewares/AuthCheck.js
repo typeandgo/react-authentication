@@ -1,15 +1,8 @@
-const express = require('express');
-const session = require('express-session');
-const redis = require('redis');
-const redisStore = require('connect-redis')(session);
-const client = redis.createClient();
-const app = express();
+const OAuthClient = require('../utils/oAuthClient');
 
-const authCheck = function (req, res, next) {
-
-  console.log('hello there!');
+module.exports = (req, res, next) => {
+  
+  req.oAuthClient = new OAuthClient();
 
   next();
-}
-
-module.exports = authCheck;
+};
