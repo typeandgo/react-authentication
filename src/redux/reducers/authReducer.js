@@ -1,7 +1,7 @@
-import { GET_AUTH, LOGIN, LOGOUT } from '../actions/types';
+import { GET_AUTH, LOGIN, LOGOUT } from '../constants';
 
 const initialState = {
-  isAuth: 'UNKOWN'
+  isAuth: 'UNKNOWN'
 };
 
 export default (state = initialState, action) => {

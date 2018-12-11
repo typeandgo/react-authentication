@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_AUTH, LOGIN, LOGOUT } from './types';
+import { GET_AUTH, LOGIN, LOGOUT } from '../constants';
 
 export const actionGetAuth = () => dispatch => {
   axios.get('/api/users/auth')

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_USER } from './types';
+import { GET_USER } from '../constants';
 
 export const actionGetUser = () => dispatch => {
   axios.get('/api/users')

@@ -5,6 +5,7 @@ const redis = require('redis');
 const redisStore = require('connect-redis')(session);
 const client = redis.createClient();
 const app = express();
+const authCheck = require('./middlewares/AuthCheck');
 
 app.use(bodyParser.urlencoded());
 
@@ -34,17 +35,25 @@ app.get('/', (req, res) => {
 
 app.get('/api/users/auth', (req, res) => {
   res.json({
-    isAuth: 'AUTHENTICATED'
+    isAuth: req.session.isAuth
   });
 });
 
 app.post('/api/users/auth/login', (req, res) => {
+  // BE API
+
+  req.session.isAuth = 'AUTHENTICATED';
+
   res.json({
     isAuth: 'AUTHENTICATED'
   });
 });
 
 app.get('/api/users/auth/logout', (req, res) => {
+  // BE API
+
+  req.session.isAuth = 'UNAUTHENTICATED';
+
   res.json({
     isAuth: 'UNAUTHENTICATED'
   });
@@ -54,7 +63,7 @@ app.get('/api/users/auth/refresh', (req, res) => {
   res.send('Refresh Token Service');
 });
 
-app.get('/api/users', (req, res) => {
+app.get('/api/users', authCheck, (req, res) => {
   res.json({
     userId: '1234567890',
     firstName: 'Engin',

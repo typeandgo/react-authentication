@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { actionLogin } from '../actions/authActions';
-import { AUTHENTICATED } from '../actions/types';
+import { actionLogin } from '../redux/actions/authActions';
+import { AUTHENTICATED } from '../redux/constants';
 
 class Login extends Component {
   state = {
