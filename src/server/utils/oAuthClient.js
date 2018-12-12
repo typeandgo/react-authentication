@@ -1,16 +1,123 @@
 const fetch = require('node-fetch');
-
+const { fromJS } = require('immutable');
 
 class OAuthClient {
 
-  authenticate () {
+  constructor (req) {
 
+    //console.log('REQ: ', req);
+
+    // Expired access token
+    this.token = {
+      accessToken: "abc",
+      refreshToken: "xyz",
+      accessTokenExpireDate: "1544500620000",
+      refreshTokenExpireDate: "1546259400000"
+    };
+
+    /*
+    // Valid access token
+    this.token = {
+      accessToken: "abc",
+      refreshToken: "xyz",
+      accessTokenExpireDate: "1544877000000",
+      refreshTokenExpireDate: "1546259400000"
+    };
+    */
   }
 
-  request (...args) {
-    console.log('Request args: ', args);
+  fetchTokenWithRefreshToken (refreshToken) {
+    const _this = this;
 
-    return fetch.apply(fetch, args);
+    return new Promise (
+      function (resolve, reject) {
+        fetch('http://localhost:3001/api/users/auth/refresh', {
+          method: 'post',
+          body: JSON.stringify(_this.refreshToken),
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(result => result.json())
+        .then(body => {
+            _this.token = {
+              accessToken: "def",
+              refreshToken: "wsx",
+              accessTokenExpireDate: "1544877000000",
+              refreshTokenExpireDate: "1546259400000"
+            };
+
+            resolve(true);
+          }
+        );
+      }
+    )
+  }
+  
+
+  authenticate () {
+    const _this = this;
+
+    return new Promise (
+      function (resolve, reject) {
+        const { accessToken, refreshToken, accessTokenExpireDate, refreshTokenExpireDate } = _this.token;
+    
+        if (accessToken && accessTokenExpireDate && !_this.isDateValid(accessTokenExpireDate)) {
+            console.log('Access Token Expired');
+          
+          if (refreshToken && refreshTokenExpireDate && _this.isDateValid(refreshTokenExpireDate)) {
+            console.log('Get New Access Token')
+
+            _this.fetchTokenWithRefreshToken(refreshToken).then(() => resolve(true));
+
+          } else {
+            console.log('Access Token && Refresh Token Expired || Token Object Doesnt Exist!');
+            const error = new Error('User Not Authenticated!');
+            reject(error);
+          }
+        }
+    
+        if (accessToken && accessTokenExpireDate && _this.isDateValid(accessTokenExpireDate)) {
+          console.log('Access Token Valid');
+          resolve(true)
+        }
+      }
+    )
+  }
+
+
+  request (...args) {
+    const { accessToken, refreshToken, accessTokenExpireDate, refreshTokenExpireDate } = this.token;
+
+   
+    if (accessToken && refreshToken && !this.isDateValid(accessTokenExpireDate) && this.isDateValid(refreshTokenExpireDate)) {
+
+      return this.authenticate().then(() => this.request(...args));
+
+    } else {
+      // 'User Not Authenticated!'
+    }
+  
+    if (accessToken && accessTokenExpireDate && this.isDateValid(accessTokenExpireDate)) {
+      console.log('Valid Access Token: ', accessToken);
+      console.log('Access Token Expire Date: ', this.milisecondsToDate(accessTokenExpireDate));
+      console.log('Fetch Url: ', args[0]);
+      console.log('Fetch Parameters: ', args[1]);
+
+      if (args[1] === undefined) {
+        args[1] = {
+          headers: {
+            "X-Auth-Token": accessToken
+          }
+        };
+      } else {
+        args[1] = fromJS(args[1]).mergeDeep(fromJS({
+          headers: {
+            "X-Auth-Token": accessToken
+          }
+        })).toJS();
+      };
+
+      return fetch.apply(fetch, args);
+    }
   }
 
   isDateValid (date) {
@@ -18,8 +125,12 @@ class OAuthClient {
     const comparaDate = parseInt(date) - bufferTime;
     const newDate = new Date();
     const currentDate = newDate.getTime();
-  
     return (comparaDate > currentDate) ? true : false;
+  }
+
+  milisecondsToDate (miliseconds) {
+    const dateValue = new Date(parseInt(miliseconds));
+    return dateValue.toString();
   }
 }
 

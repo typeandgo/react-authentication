@@ -7,7 +7,11 @@ const client = redis.createClient();
 const app = express();
 const authCheck = require('./middlewares/AuthCheck');
 
-app.use(bodyParser.urlencoded());
+client.on('connect', function() { console.log('Redis client connected')});
+
+client.on('error', function (err) { console.log('Something went wrong ' + err)});
+
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
 
@@ -36,10 +40,10 @@ app.post('/api/users/auth/login', (req, res) => {
   // BE API
 
   const token = {
-    accessToken: 'ABC',
-    refreshToken: 'XYZ',
-    accessTokenExpireDate: '12345678',
-    refreshTokenExpireDate: '87654321'
+    accessToken: "abc",
+    refreshToken: "xyz",
+    accessTokenExpireDate: "1544500620000",
+    refreshTokenExpireDate: "1546259400000"
   };
 
   req.session.isAuth = 'AUTHENTICATED';
@@ -66,8 +70,10 @@ app.get('/api/users/auth/logout', (req, res) => {
   });
 });
 
-app.get('/api/users/auth/refresh', (req, res) => {
-  res.send('Refresh Token Service');
+app.post('/api/users/auth/refresh', (req, res) => {
+  res.json({
+    token: 'hede token'
+  });
 });
 
 app.get('/api/users', (req, res) => {
@@ -76,13 +82,14 @@ app.get('/api/users', (req, res) => {
       return result.json();
     })
     .then( json => {
+      console.log('Fetch Response: ', json);
       return res.json(json)
+    })
+    .catch(error => {
+      console.log("Express Fetch Error: ", error);
+      return res.status(500).send(error.message);
     });
 });
-
-
-
-
 
 //--------------------------------------------
 // SIMULATED BE SERVICE

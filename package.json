@@ -10,6 +10,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
+    "immutable": "^4.0.0-rc.12",
     "node-fetch": "^2.3.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
