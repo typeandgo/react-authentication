@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { GET_AUTH, LOGIN, LOGOUT } from '../constants';
+import config from '../../config';
 
 export const actionGetAuth = () => dispatch => {
-  axios.get('/api/users/auth')
+  axios.get(config.bffGetToken)
     .then(result => dispatch({
       type: GET_AUTH,
       payload: result.data.isAuth
@@ -10,7 +11,7 @@ export const actionGetAuth = () => dispatch => {
 }
 
 export const actionLogin = formData => dispatch => {
-  axios.post('/api/users/auth/login', formData)
+  axios.post(config.bffLogin, formData)
     .then(result => dispatch({
       type: LOGIN,
       payload: result.data.isAuth
@@ -18,7 +19,7 @@ export const actionLogin = formData => dispatch => {
 }
 
 export const actionLogout = () => dispatch => {
-  axios.get('/api/users/auth/logout')
+  axios.get(config.bffLogout)
     .then(result => dispatch({
       type: LOGOUT,
       payload: result.data.isAuth

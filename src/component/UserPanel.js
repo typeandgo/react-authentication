@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { actionGetAuth, actionLogout } from '../redux/actions/authActions';
@@ -10,12 +10,13 @@ class UserPanel extends Component {
   render() {
 
     const { isAuth, user } = this.props;
+    const pathName = this.props.location.pathname;
 
     if (isAuth === UNKNOWN) {
       this.props.actionGetAuth();
     };
 
-    let template = (<Link className="nav-link" to="/login">Login</Link>);
+    let template = pathName === '/login' ? null : <Link className="nav-link" to="/login">Login</Link>;
 
     if (isAuth === AUTHENTICATED && Object.keys(user).length === 0) {
       
@@ -64,4 +65,4 @@ const mapStateToProps = (state) => ({
   user: state.user.userInfo
 });
 
-export default connect(mapStateToProps, { actionGetAuth, actionLogout, actionGetUser })(UserPanel);
+export default withRouter(connect(mapStateToProps, { actionGetAuth, actionLogout, actionGetUser })(UserPanel));

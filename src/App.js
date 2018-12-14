@@ -12,6 +12,8 @@ import Login from './component/Login';
 import NotFound from './component/NotFound';
 import Header from './component/Ui/Header';
 import ExampleProtectedRoute from './component/ExampleProtectedRoute';
+import Account from './component/Account';
+import Settings from './component/Settings';
 
 class App extends Component {
   render() {
@@ -26,6 +28,8 @@ class App extends Component {
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/example" component={ExampleProtectedRoute} />
+              <PrivateRoute exact path="/account" component={Account} />
+              <PrivateRoute exact path="/settings" component={Settings} />
               <Route component={NotFound} />
             </Switch>    
           </div>

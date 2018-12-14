@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 export default class Register extends Component {
 
@@ -26,7 +26,7 @@ export default class Register extends Component {
     return (
       <div className="row">
         <div className="col-md-12">
-          <h1>Login</h1>          
+          <h1>Register</h1>          
           <div className="card">
             <div className="card-body">
               <div className="row justify-content-md-center">

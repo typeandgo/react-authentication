@@ -12,7 +12,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     <Route {...rest} render={(props) => {
       if (isAuth === UNKNOWN) {
         return (<div>Loading...</div>)
-      } 
+      }
 
       if (isAuth === AUTHENTICATED) {
         return <Component {...props} />;
