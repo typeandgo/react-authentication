@@ -1,3 +1,12 @@
+/*
+TODOS:
+
+- Input validations
+- 400 - 403 - 404 - 500 - 503 response controls
+- Expired token control
+- Generic 500 error responses 
+*/
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

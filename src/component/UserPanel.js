@@ -2,32 +2,34 @@ import React, { Component, Fragment } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { actionGetAuth, actionLogout } from '../redux/actions/authActions';
-import { actionGetUser } from '../redux/actions/userActions';
-import { UNKNOWN, AUTHENTICATED } from '../redux/constants';
+import { actionLogout, actionGetUser, actionTest } from '../redux/actions/authActions';
+import { AUTHENTICATED } from '../redux/actions/types';
 
 class UserPanel extends Component {
+
+  componentDidMount () {
+    this.props.actionGetUser();
+  }
+
   render() {
 
-    const { isAuth, user } = this.props;
+    const { user, auth, actionTest } = this.props;
     const pathName = this.props.location.pathname;
+    let template = pathName === '/login' ? null : 
+    
+    (
+      <Fragment>
+        <Link className="nav-link" to="/login">Login</Link>
+        <button onClick={ actionTest }>Test without Auth</button>
+      </Fragment>
+    );
 
-    if (isAuth === UNKNOWN) {
-      this.props.actionGetAuth();
-    };
-
-    let template = pathName === '/login' ? null : <Link className="nav-link" to="/login">Login</Link>;
-
-    if (isAuth === AUTHENTICATED && Object.keys(user).length === 0) {
-      
-      this.props.actionGetUser();
-
-    } else if (isAuth === AUTHENTICATED && Object.keys(user).length > 0) {
+    if (auth === AUTHENTICATED) {
 
       template = ( 
         <Fragment>
           <a href="#" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" style={{ fontSize: '12px' }} id="dropdownMenu2" aria-haspopup="true" aria-expanded="false">
-            {`${user.firstName} ${user.lastName}`}
+            {`${user.fullName}`}
           </a>
 
           <div style={{ fontSize: '9px' }}>{`Balance: ${user.balance} TL`}</div>       
@@ -38,6 +40,8 @@ class UserPanel extends Component {
             <div className="dropdown-divider"></div>
             <a className="dropdown-item" href="#" onClick={this.props.actionLogout}><i className="fas fa-power-off"></i> Logout</a>
           </ul>
+
+          <button onClick={ this.props.actionTest }>Test with Auth</button>
         </Fragment>
       )
     }
@@ -53,16 +57,15 @@ class UserPanel extends Component {
 };
 
 UserPanel.propTypes = {
-  isAuth: PropTypes.string.isRequired,
-  user: PropTypes.object,
+  user: PropTypes.object.isRequired,
+  auth: PropTypes.string.isRequired,
   actionLogout: PropTypes.func.isRequired,
-  actionGetAuth: PropTypes.func.isRequired,
-  actionGetUser: PropTypes.func.isRequired
+  actionTest: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  isAuth: state.auth.isAuth,
-  user: state.user.userInfo
+  user: state.user.user,
+  auth: state.user.auth
 });
 
-export default withRouter(connect(mapStateToProps, { actionGetAuth, actionLogout, actionGetUser })(UserPanel));
+export default withRouter(connect(mapStateToProps, { actionLogout, actionGetUser, actionTest })(UserPanel));

@@ -1,28 +1,39 @@
-import { GET_AUTH, LOGIN, LOGOUT } from '../constants';
+import { GET_USER, LOGIN, LOGOUT, TEST } from '../constants';
+import { UNKNOWN, AUTHENTICATED, UNAUTHENTICATED } from '../actions/types';
 
 const initialState = {
-  isAuth: 'UNKNOWN'
+  user: {},
+  auth: UNKNOWN,
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
 
-    case GET_AUTH:
+    case GET_USER:
       return {
         ...state,
-        isAuth: action.payload
+        user: action.payload,
+        auth: (action.payload.userId) ? AUTHENTICATED : UNAUTHENTICATED
       };
 
     case LOGIN:
       return {
         ...state,
-        isAuth: action.payload
+        user: action.payload,
+        auth: (action.payload.userId) ? AUTHENTICATED : UNAUTHENTICATED
       };
 
     case LOGOUT:
       return {
         ...state,
-        isAuth: action.payload
+        user: action.payload,
+        auth: (action.payload.userId) ? AUTHENTICATED : UNAUTHENTICATED
+      };
+
+    case TEST:
+      return {
+        ...state,
+        user: action.payload
       };
 
     default:

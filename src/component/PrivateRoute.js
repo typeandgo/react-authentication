@@ -2,35 +2,38 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { UNKNOWN, AUTHENTICATED, UNAUTHENTICATED } from '../redux/constants';
+import { UNAUTHENTICATED, UNKNOWN } from '../redux/actions/types';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
 
-  const isAuth = rest.isAuth || UNKNOWN;
+  const { user, auth } = rest;
 
   return (
     <Route {...rest} render={(props) => {
-      if (isAuth === UNKNOWN) {
-        return (<div>Loading...</div>)
-      }
+      if (auth === UNKNOWN) {
 
-      if (isAuth === AUTHENTICATED) {
-        return <Component {...props} />;
-      }
+        return <div>Loading...</div>;
 
-      if (isAuth === UNAUTHENTICATED) {
+      } else if (auth === UNAUTHENTICATED) {
+
         return <Redirect to={{ pathname: '/login', state: { from: props.location } }} />;
+
+      } else {
+
+        return <Component {...props} />;
       }
     }} />
   );
 }
 
 PrivateRoute.propTypes = {
-  isAuth: PropTypes.string.isRequired
+  user: PropTypes.object.isRequired,
+  auth: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  isAuth: state.auth.isAuth
+  user: state.user.user,
+  auth: state.user.auth
 });
 
 export default connect(mapStateToProps)(PrivateRoute);

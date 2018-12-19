@@ -3,12 +3,12 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { actionLogin } from '../redux/actions/authActions';
-import { AUTHENTICATED } from '../redux/constants';
+import { AUTHENTICATED } from '../redux/actions/types';
 
 class Login extends Component {
   state = {
-    username: '',
-    password: ''
+    username: '15787609',
+    password: '807871'
   }
 
   onInputChange = (e) => {
@@ -31,8 +31,9 @@ class Login extends Component {
   
   render() {
     const { from } = this.props.location.state || { from: { pathname: '/' } };
-    const redirectToReferer = this.props.isAuth === AUTHENTICATED ? true : false;
-    
+    const { user, auth } = this.props;
+    const redirectToReferer = auth === AUTHENTICATED ? true : false;
+
     if (redirectToReferer === true) {
       return <Redirect to={from} />;
     };
@@ -53,6 +54,7 @@ class Login extends Component {
                         className="form-control" 
                         name="username"
                         id="username"
+                        ref={c => this.username = c }
                         value={this.state.username.value}
                         onChange={ this.onInputChange }
                         placeholder="Username" />
@@ -64,6 +66,7 @@ class Login extends Component {
                         type="password" 
                         className="form-control"
                         name="password"
+                        ref={c => this.password = c }
                         id="password"
                         value={this.state.password.value}
                         onChange={ this.onInputChange }
@@ -83,12 +86,14 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  isAuth: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
+  auth: PropTypes.string.isRequired,
   actionLogin: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  isAuth: state.auth.isAuth
+  user: state.user.user,
+  auth: state.user.auth
 });
 
 export default connect(mapStateToProps, { actionLogin })(Login);

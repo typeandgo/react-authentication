@@ -1,27 +1,40 @@
 import axios from 'axios';
-import { GET_AUTH, LOGIN, LOGOUT } from '../constants';
+import { LOGIN, LOGOUT, GET_USER, TEST } from '../constants';
 import config from '../../config';
 
-export const actionGetAuth = () => dispatch => {
-  axios.get(config.bffGetToken)
-    .then(result => dispatch({
-      type: GET_AUTH,
-      payload: result.data.isAuth
-    }));
-}
-
 export const actionLogin = formData => dispatch => {
-  axios.post(config.bffLogin, formData)
-    .then(result => dispatch({
-      type: LOGIN,
-      payload: result.data.isAuth
-    }));
+  axios.post(config.bffLoginUrl, formData)
+    .then(result => {
+
+      console.log('result: ', result.data);
+
+      return dispatch({
+        type: LOGIN,
+        payload: result.data
+      })
+    });
 }
 
-export const actionLogout = () => dispatch => {
-  axios.get(config.bffLogout)
+export const actionLogout = formData => dispatch => {
+  axios.get(config.bffLogoutUrl)
     .then(result => dispatch({
       type: LOGOUT,
-      payload: result.data.isAuth
+      payload: result.data
+    }));
+}
+
+export const actionGetUser = formData => dispatch => {
+  axios.get(config.bffGetUserUrl)
+    .then(result => dispatch({
+      type: GET_USER,
+      payload: result.data
+    }));
+}
+
+export const actionTest = formData => dispatch => {
+  axios.get('/bff/forbiddenUrl')
+    .then(result => dispatch({
+      type: TEST,
+      payload: result.data
     }));
 }
