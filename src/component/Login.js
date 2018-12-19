@@ -7,8 +7,9 @@ import { AUTHENTICATED } from '../redux/actions/types';
 
 class Login extends Component {
   state = {
-    username: '15787609',
-    password: '807871'
+    username: '',
+    password: '',
+    errorMessage: '' 
   }
 
   onInputChange = (e) => {
@@ -17,15 +18,28 @@ class Login extends Component {
     })
   }
 
-  onSubmit = (e) => {
+  formValidation = (e) => {
     e.preventDefault();
-   
-    const { username, password } = this.state;
+
+    const { username, password, errorMessage } = this.state;
     const formData =  {
       username,
       password
     };
 
+    if (username.length < 8 || password.length < 6) {
+      
+      this.setState({  errorMessage: 'Formu kontrol edin.' });
+
+    } else {
+
+      this.setState({  errorMessage: '' });
+
+      this.formSubmit(formData);
+    }
+  }
+
+  formSubmit = (formData) => {
     this.props.actionLogin(formData);
   }
   
@@ -33,6 +47,16 @@ class Login extends Component {
     const { from } = this.props.location.state || { from: { pathname: '/' } };
     const { user, auth } = this.props;
     const redirectToReferer = auth === AUTHENTICATED ? true : false;
+    const { errorMessage } = this.state;
+    let errorMessageTemplate = null;
+
+    if (errorMessage.length > 0) {
+      errorMessageTemplate = <div className="alert alert-danger" role="alert">Formu kontrol edin.</div>
+    }
+
+    if (user.status >= 400) {
+      errorMessageTemplate = <div className="alert alert-danger" role="alert">{ user.message }</div>
+    }
 
     if (redirectToReferer === true) {
       return <Redirect to={from} />;
@@ -46,7 +70,7 @@ class Login extends Component {
             <div className="card-body">
               <div className="row justify-content-md-center">
                 <div className="col-md-4">
-                  <form onSubmit={ this.onSubmit }>
+                  <form onSubmit={ this.formValidation }>
                     <div className="form-group">
                       <label htmlFor="username">Username</label>
                       <input 
@@ -72,6 +96,8 @@ class Login extends Component {
                         onChange={ this.onInputChange }
                         placeholder="Password" />
                     </div>
+
+                    { errorMessageTemplate }
 
                     <button type="submit" className="btn btn-primary">Submit</button>
                   </form>

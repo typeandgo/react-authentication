@@ -5,9 +5,6 @@ import config from '../../config';
 export const actionLogin = formData => dispatch => {
   axios.post(config.bffLoginUrl, formData)
     .then(result => {
-
-      console.log('result: ', result.data);
-
       return dispatch({
         type: LOGIN,
         payload: result.data
@@ -15,12 +12,9 @@ export const actionLogin = formData => dispatch => {
     });
 }
 
-export const actionLogout = formData => dispatch => {
+export const actionLogout = () => dispatch => {
   axios.get(config.bffLogoutUrl)
-    .then(result => dispatch({
-      type: LOGOUT,
-      payload: result.data
-    }));
+    .then(result => dispatch({ type: LOGOUT }));
 }
 
 export const actionGetUser = formData => dispatch => {
@@ -33,8 +27,20 @@ export const actionGetUser = formData => dispatch => {
 
 export const actionTest = formData => dispatch => {
   axios.get('/bff/forbiddenUrl')
-    .then(result => dispatch({
-      type: TEST,
-      payload: result.data
-    }));
+    .then(result => {
+      return dispatch({
+        type: TEST,
+        payload: result.data
+      })
+    })
+    .catch(error => {
+      if (error.response.status === 403) {
+        return dispatch({ type: LOGOUT })
+      };
+
+      return dispatch({
+        type: TEST,
+        payload: error.response.data
+      });
+    });
 }

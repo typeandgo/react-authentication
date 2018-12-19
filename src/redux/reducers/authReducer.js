@@ -4,6 +4,7 @@ import { UNKNOWN, AUTHENTICATED, UNAUTHENTICATED } from '../actions/types';
 const initialState = {
   user: {},
   auth: UNKNOWN,
+  customData: {}
 };
 
 export default (state = initialState, action) => {
@@ -26,14 +27,14 @@ export default (state = initialState, action) => {
     case LOGOUT:
       return {
         ...state,
-        user: action.payload,
-        auth: (action.payload.userId) ? AUTHENTICATED : UNAUTHENTICATED
+        user: {},
+        auth: UNAUTHENTICATED
       };
 
     case TEST:
       return {
         ...state,
-        user: action.payload
+        customData: action.payload
       };
 
     default:

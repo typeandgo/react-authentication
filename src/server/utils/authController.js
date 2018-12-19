@@ -52,7 +52,7 @@ class authController {
 
         } else {
 
-          console.log(`Access Token `, `${accessToken}`.cyan, ` expired on `, `${milisecondsToDate(accessTokenExpireDate)}`.cyan);
+          console.log(`Access Token `, `${accessToken}`.grey, ` expired on `, `${milisecondsToDate(accessTokenExpireDate)}`.grey);
           console.log('Get New Access Token');
 
           _this._fetchTokenWithRefreshToken(refreshToken).then(() => resolve(true)); 
@@ -63,6 +63,7 @@ class authController {
       }
     })
   }
+  
 
   request (...args) {
     const { accessToken, refreshToken, accessTokenExpireDate, refreshTokenExpireDate } = this.user;
@@ -76,14 +77,15 @@ class authController {
     } else {
   
       if (accessToken && accessTokenExpireDate && this._isDateValid(accessTokenExpireDate)) {
-        console.log(`Current Date: `, `${new Date()}`.cyan);
-        console.log(`Access token `, `${accessToken}`.cyan, ` will expire at `, `${milisecondsToDate(accessTokenExpireDate)}`.cyan);
-        console.log(`Refresh token `,`${refreshToken}`.cyan, ` will expire at `, `${milisecondsToDate(refreshTokenExpireDate)}`.cyan);
-        console.log(`Fetching to `, `${args[0]}`.cyan, ` with these arguments `, `${JSON.stringify(args[1]) || "' '"}`.cyan);
-
+        console.log(`Current Date: `, `${new Date()}`.grey);
+        console.log(`Access token `, `${accessToken}`.grey, ` will expire at `, `${milisecondsToDate(accessTokenExpireDate)}`.grey);
+        console.log(`Refresh token `,`${refreshToken}`.grey, ` will expire at `, `${milisecondsToDate(refreshTokenExpireDate)}`.grey);
+        
         const customHeaders =  {headers: { "X-Auth-Token": accessToken }};
 
         args[1] = args[1] === undefined ? customHeaders : fromJS(args[1]).mergeDeep(fromJS(customHeaders)).toJS();
+
+        console.log(`Fetching to `, `${args[0]}`.grey, ` with these arguments `, `${JSON.stringify(args[1]) || "' '"}`.grey);
   
         return fetch.apply(fetch, args);
         

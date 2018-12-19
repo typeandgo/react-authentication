@@ -1,11 +1,11 @@
 const config = {
   authorization: {
     clientId: 'xxx',
-    clientSecret: '123456'
+    clientSecret: 'xxx'
   },
   oAuthClient: {
     clientId: 'xxx',
-    clientSecret: '123456'
+    clientSecret: 'xxx'
   },
   expressSessionSecretKey: 'EXPRESS_SESSION_SECRET_KEY',
   bffLoginUrl: '/bff/login',
